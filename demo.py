@@ -301,44 +301,44 @@ def run_demo_server(pipe, vae_2):
                     directory_name="examples_image",
                 )
 
-            with gr.Tab("Video"):
-                with gr.Row():
-                    with gr.Column():
-                        video_input = gr.Video(
-                            label="Input Video",
-                            sources=["upload", "webcam"],
-                        )
-                        with gr.Row():
-                            video_submit_btn = gr.Button(
-                                value="Remove reflection", variant="primary"
-                            )
-                            video_reset_btn = gr.Button(value="Reset")
-                    with gr.Column():
-                        processed_frames = ImageSlider(
-                            label="Realtime Visualization",
-                            type="filepath",
-                            show_download_button=True,
-                            show_share_button=True,
-                            interactive=False,
-                            elem_classes="slider",
-                            # position=0.25,
-                        )
-                        video_output_files = gr.Files(
-                            label="outputs",
-                            elem_id="download",
-                            interactive=False,
-                        )
-                Examples(
-                    fn=process_pipe_video,
-                    examples=sorted([
-                        os.path.join("files", "video", name)
-                        for name in os.listdir(os.path.join("files", "video"))
-                    ]),
-                    inputs=[video_input],
-                    outputs=[processed_frames, video_output_files],
-                    directory_name="examples_video",
-                    cache_examples=False,
-                )
+            # with gr.Tab("Video"):
+            #     with gr.Row():
+            #         with gr.Column():
+            #             video_input = gr.Video(
+            #                 label="Input Video",
+            #                 sources=["upload", "webcam"],
+            #             )
+            #             with gr.Row():
+            #                 video_submit_btn = gr.Button(
+            #                     value="Remove reflection", variant="primary"
+            #                 )
+            #                 video_reset_btn = gr.Button(value="Reset")
+            #         with gr.Column():
+            #             processed_frames = ImageSlider(
+            #                 label="Realtime Visualization",
+            #                 type="filepath",
+            #                 show_download_button=True,
+            #                 show_share_button=True,
+            #                 interactive=False,
+            #                 elem_classes="slider",
+            #                 # position=0.25,
+            #             )
+            #             video_output_files = gr.Files(
+            #                 label="outputs",
+            #                 elem_id="download",
+            #                 interactive=False,
+            #             )
+            #     Examples(
+            #         fn=process_pipe_video,
+            #         examples=sorted([
+            #             os.path.join("files", "video", name)
+            #             for name in os.listdir(os.path.join("files", "video"))
+            #         ]),
+            #         inputs=[video_input],
+            #         outputs=[processed_frames, video_output_files],
+            #         directory_name="examples_video",
+            #         cache_examples=False,
+            #     )
 
         ### Image tab
         image_submit_btn.click(
@@ -372,19 +372,19 @@ def run_demo_server(pipe, vae_2):
 
         ### Video tab
 
-        video_submit_btn.click(
-            fn=process_pipe_video,
-            inputs=[video_input],
-            outputs=[processed_frames, video_output_files],
-            concurrency_limit=1,
-        )
+        # video_submit_btn.click(
+        #     fn=process_pipe_video,
+        #     inputs=[video_input],
+        #     outputs=[processed_frames, video_output_files],
+        #     concurrency_limit=1,
+        # )
 
-        video_reset_btn.click(
-            fn=lambda: (None, None, None),
-            inputs=[],
-            outputs=[video_input, processed_frames, video_output_files],
-            concurrency_limit=1,
-        )
+        # video_reset_btn.click(
+        #     fn=lambda: (None, None, None),
+        #     inputs=[],
+        #     outputs=[video_input, processed_frames, video_output_files],
+        #     concurrency_limit=1,
+        # )
 
         ### Server launch
 
