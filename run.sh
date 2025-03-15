@@ -1,0 +1,1 @@
+python run.py --input_dir ./input/ --result_dir ./result/ --concat_dir ./concat/ 
