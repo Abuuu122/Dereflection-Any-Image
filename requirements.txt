@@ -1,0 +1,2 @@
+diffusers==0.32.0.dev0
+gradio==4.44.1
