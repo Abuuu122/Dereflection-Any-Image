@@ -3,7 +3,7 @@
 </div>
 
 # Dereflection Any Image with Diffusion Priors and Diversified Data
-### [Project Page](https://abuuu122.github.io/DAI.github.io/) | [Paper]() | [Data]()
+### [Project Page](https://abuuu122.github.io/DAI.github.io/) | [Paper]() | [Data]() | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/129uKcCNfoR2sIn5RifqhYGpB0xa2tdsH?usp=sharing)
 
 📖[Dereflection Any Image with Diffusion Priors and Diversified Data](https://gaussianobject.github.io/)
 
@@ -27,6 +27,10 @@ pip install -r requirements.txt
 
 ### Weights
 Download the trained weights by [Google Drive](https://drive.google.com/drive/folders/1WFczJ0LgVbFfVQym7FLGW-f5iU7G1Rr-?usp=drive_link) and and drop them into the "weights" dir.
+
+```sh
+gdown https://drive.google.com/drive/folders/1WFczJ0LgVbFfVQym7FLGW-f5iU7G1Rr- -O /weights --folder
+```
 
 ## 💪Usage
 
