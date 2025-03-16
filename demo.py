@@ -35,8 +35,7 @@ from tqdm import tqdm
 from pathlib import Path
 import gradio
 from gradio.utils import get_cache_folder
-# from stabledelight import YosoDelightPipeline
-from stablerr.pipeline_all import RRPipeline
+from DAI.pipeline_all import DAIPipeline
 
 from diffusers import (
     AutoencoderKL,
@@ -45,9 +44,9 @@ from diffusers import (
 
 from transformers import CLIPTextModel, AutoTokenizer
 
-from stablerr.controlnetvae import ControlNetVAEModel
+from DAI.controlnetvae import ControlNetVAEModel
 
-from stablerr.decoder_rr import CustomAutoencoderKL
+from DAI.decoder import CustomAutoencoderKL
 
 
 class Examples(gradio.helpers.Examples):
@@ -216,7 +215,7 @@ def run_demo_server(pipe, vae_2):
 
     with gr.Blocks(
         theme=gradio_theme,
-        title="Reflection Removal",
+        title="Dereflection Any Image",
         css="""
             #download {
                 height: 118px;
@@ -260,7 +259,7 @@ def run_demo_server(pipe, vae_2):
     ) as demo:
         gr.Markdown(
             """
-            # Reflection Removal
+            # Dereflection Any Image
             <p align="center">
         """
         )
@@ -301,44 +300,6 @@ def run_demo_server(pipe, vae_2):
                     directory_name="examples_image",
                 )
 
-            # with gr.Tab("Video"):
-            #     with gr.Row():
-            #         with gr.Column():
-            #             video_input = gr.Video(
-            #                 label="Input Video",
-            #                 sources=["upload", "webcam"],
-            #             )
-            #             with gr.Row():
-            #                 video_submit_btn = gr.Button(
-            #                     value="Remove reflection", variant="primary"
-            #                 )
-            #                 video_reset_btn = gr.Button(value="Reset")
-            #         with gr.Column():
-            #             processed_frames = ImageSlider(
-            #                 label="Realtime Visualization",
-            #                 type="filepath",
-            #                 show_download_button=True,
-            #                 show_share_button=True,
-            #                 interactive=False,
-            #                 elem_classes="slider",
-            #                 # position=0.25,
-            #             )
-            #             video_output_files = gr.Files(
-            #                 label="outputs",
-            #                 elem_id="download",
-            #                 interactive=False,
-            #             )
-            #     Examples(
-            #         fn=process_pipe_video,
-            #         examples=sorted([
-            #             os.path.join("files", "video", name)
-            #             for name in os.listdir(os.path.join("files", "video"))
-            #         ]),
-            #         inputs=[video_input],
-            #         outputs=[processed_frames, video_output_files],
-            #         directory_name="examples_video",
-            #         cache_examples=False,
-            #     )
 
         ### Image tab
         image_submit_btn.click(
@@ -370,21 +331,6 @@ def run_demo_server(pipe, vae_2):
             queue=False,
         )
 
-        ### Video tab
-
-        # video_submit_btn.click(
-        #     fn=process_pipe_video,
-        #     inputs=[video_input],
-        #     outputs=[processed_frames, video_output_files],
-        #     concurrency_limit=1,
-        # )
-
-        # video_reset_btn.click(
-        #     fn=lambda: (None, None, None),
-        #     inputs=[],
-        #     outputs=[video_input, processed_frames, video_output_files],
-        #     concurrency_limit=1,
-        # )
 
         ### Server launch
 
@@ -403,30 +349,30 @@ def main():
 
     weight_dtype = torch.float32
     model_dir = "./weights"
-    pretrained_model_name_or_path = "stabilityai/stable-diffusion-2-1"
+    pretrained_model_name_or_path = "JichenHu/dereflection-any-image-v0"
+    pretrained_model_name_or_path2 = "stabilityai/stable-diffusion-2-1"
     revision = None
     variant = None
     # Load the model
-    # normal
-    controlnet = ControlNetVAEModel.from_pretrained(model_dir + "/controlnet", torch_dtype=weight_dtype).to(device)
-    unet = UNet2DConditionModel.from_pretrained(model_dir + "/unet", torch_dtype=weight_dtype).to(device)
-    vae_2 = CustomAutoencoderKL.from_pretrained(model_dir + "/vae_2", torch_dtype=weight_dtype).to(device)
+    controlnet = ControlNetVAEModel.from_pretrained(pretrained_model_name_or_path, subfolder="controlnet", torch_dtype=weight_dtype).to(device)
+    unet = UNet2DConditionModel.from_pretrained(pretrained_model_name_or_path, subfolder="unet", torch_dtype=weight_dtype).to(device)
+    vae_2 = CustomAutoencoderKL.from_pretrained(pretrained_model_name_or_path, subfolder="vae_2", torch_dtype=weight_dtype).to(device)
 
     # Load other components of the pipeline
     vae = AutoencoderKL.from_pretrained(
-            pretrained_model_name_or_path, subfolder="vae", revision=revision, variant=variant
+            pretrained_model_name_or_path2, subfolder="vae", revision=revision, variant=variant
         ).to(device)
 
     text_encoder = CLIPTextModel.from_pretrained(
-            pretrained_model_name_or_path, subfolder="text_encoder", revision=revision, variant=variant
+            pretrained_model_name_or_path2, subfolder="text_encoder", revision=revision, variant=variant
         ).to(device)
     tokenizer = AutoTokenizer.from_pretrained(
-                pretrained_model_name_or_path,
+                pretrained_model_name_or_path2,
                 subfolder="tokenizer",
                 revision=revision,
                 use_fast=False,
             )
-    pipe = RRPipeline(
+    pipe = DAIPipeline(
             vae=vae,
             text_encoder=text_encoder,
             tokenizer=tokenizer,

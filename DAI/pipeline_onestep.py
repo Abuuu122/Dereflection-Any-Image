@@ -74,7 +74,7 @@ Examples:
 
 
 @dataclass
-class YosoRROutput(BaseOutput):
+class DAIOutput(BaseOutput):
     """
     Output class for Marigold monocular normals prediction pipeline.
 
@@ -95,7 +95,7 @@ class YosoRROutput(BaseOutput):
     gaus_noise: Union[None, torch.Tensor]
 
 
-class YosoRRPipeline(StableDiffusionControlNetPipeline):
+class OneStepPipeline(StableDiffusionControlNetPipeline):
     """ Pipeline for monocular normals estimation using the Marigold method: https://marigoldmonodepth.github.io.
     Pipeline for text-to-image generation using Stable Diffusion with ControlNet guidance.
 
@@ -171,7 +171,6 @@ class YosoRRPipeline(StableDiffusionControlNetPipeline):
             requires_safety_checker,
                 )
 
-        # TODO yoso ImageProcessor
         self.image_processor = MarigoldImageProcessor(vae_scale_factor=self.vae_scale_factor)
         self.control_image_processor = MarigoldImageProcessor(vae_scale_factor=self.vae_scale_factor)
         self.default_denoising_steps = default_denoising_steps
@@ -521,7 +520,7 @@ class YosoRRPipeline(StableDiffusionControlNetPipeline):
             return_dict=False,
         )
 
-        # 7. YOSO sampling
+        # 7. Onestep sampling
         latent_x_t = self.unet(
             pred_latent,
             self.t_start,
@@ -552,7 +551,7 @@ class YosoRRPipeline(StableDiffusionControlNetPipeline):
         # 11. Offload all models
         self.maybe_free_model_hooks()
 
-        return YosoRROutput(
+        return DAIOutput(
             prediction=prediction,
             latent=latent_x_t,
             gaus_noise=gaus_noise,

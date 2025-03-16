@@ -26,11 +26,9 @@ pip install -r requirements.txt
 
 
 ### Weights
-Download the trained weights by [Google Drive](https://drive.google.com/drive/folders/1WFczJ0LgVbFfVQym7FLGW-f5iU7G1Rr-?usp=drive_link) and and drop them into the "weights" dir.
+Our scripts will automatically download the pretrained weights from Huggingface.
 
-```sh
-gdown https://drive.google.com/drive/folders/1WFczJ0LgVbFfVQym7FLGW-f5iU7G1Rr- -O /weights --folder
-```
+You can also download the weights by [Google Drive](https://drive.google.com/drive/folders/1WFczJ0LgVbFfVQym7FLGW-f5iU7G1Rr-?usp=drive_link) or [Huggingface](https://huggingface.co/JichenHu/dereflection-any-image-v0)
 
 ## 💪Usage
 

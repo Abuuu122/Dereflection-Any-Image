@@ -1,8 +1,8 @@
 import os
 import torch
 from PIL import Image
-from stablerr.pipeline_yoso_rr import YosoRRPipeline
-from stablerr.controlnetvae import ControlNetVAEModel
+from DAI.pipeline_onestep import OneStepPipeline
+from DAI.controlnetvae import ControlNetVAEModel
 import numpy as np
 from diffusers import (
     AutoencoderKL,
@@ -25,8 +25,8 @@ from peft.utils import get_peft_model_state_dict, set_peft_model_state_dict
 from safetensors.torch import load_file
 
 
-from stablerr.pipeline_all import RRPipeline
-from stablerr.decoder_rr import CustomAutoencoderKL
+from DAI.pipeline_all import DAIPipeline
+from DAI.decoder import CustomAutoencoderKL
 
 from tqdm import tqdm
 import argparse
@@ -36,32 +36,33 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 weight_dtype = torch.float32
 model_dir = "./weights"
-pretrained_model_name_or_path = "stabilityai/stable-diffusion-2-1"
+pretrained_model_name_or_path = "JichenHu/dereflection-any-image-v0"
+pretrained_model_name_or_path2 = "stabilityai/stable-diffusion-2-1"
 revision = None
 variant = None
 # Load the model
 # normal
-controlnet = ControlNetVAEModel.from_pretrained(model_dir + "/controlnet", torch_dtype=weight_dtype).to(device)
-unet = UNet2DConditionModel.from_pretrained(model_dir + "/unet", torch_dtype=weight_dtype).to(device)
-vae_2 = CustomAutoencoderKL.from_pretrained(model_dir + "/vae_2", torch_dtype=weight_dtype).to(device)
+controlnet = ControlNetVAEModel.from_pretrained(pretrained_model_name_or_path, subfolder="controlnet", torch_dtype=weight_dtype).to(device)
+unet = UNet2DConditionModel.from_pretrained(pretrained_model_name_or_path, subfolder="unet", torch_dtype=weight_dtype).to(device)
+vae_2 = CustomAutoencoderKL.from_pretrained(pretrained_model_name_or_path, subfolder="vae_2", torch_dtype=weight_dtype).to(device)
 
 
 # Load other components of the pipeline
 vae = AutoencoderKL.from_pretrained(
-        pretrained_model_name_or_path, subfolder="vae", revision=revision, variant=variant
+        pretrained_model_name_or_path2, subfolder="vae", revision=revision, variant=variant
     ).to(device)
 
 # import pdb; pdb.set_trace()
 text_encoder = CLIPTextModel.from_pretrained(
-        pretrained_model_name_or_path, subfolder="text_encoder", revision=revision, variant=variant
+        pretrained_model_name_or_path2, subfolder="text_encoder", revision=revision, variant=variant
     ).to(device)
 tokenizer = AutoTokenizer.from_pretrained(
-            pretrained_model_name_or_path,
+            pretrained_model_name_or_path2,
             subfolder="tokenizer",
             revision=revision,
             use_fast=False,
         )
-pipeline = RRPipeline(
+pipeline = DAIPipeline(
         vae=vae,
         text_encoder=text_encoder,
         tokenizer=tokenizer,

@@ -1,2 +1,6 @@
-diffusers==0.32.0.dev0
+diffusers==0.32.0
 gradio==4.44.1
+gradio_imageslider
+torch
+transformers
+accelerate
