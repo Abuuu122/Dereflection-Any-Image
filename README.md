@@ -3,7 +3,7 @@
 </div>
 
 # Dereflection Any Image with Diffusion Priors and Diversified Data
-### [Project Page](https://abuuu122.github.io/DAI.github.io/) | [Paper]() | [Data]() | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/129uKcCNfoR2sIn5RifqhYGpB0xa2tdsH?usp=sharing)
+### [Project Page](https://abuuu122.github.io/DAI.github.io/) | [Paper]() | [Data (coming soon)]() | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/129uKcCNfoR2sIn5RifqhYGpB0xa2tdsH?usp=sharing)
 
 📖[Dereflection Any Image with Diffusion Priors and Diversified Data](https://gaussianobject.github.io/)
 
