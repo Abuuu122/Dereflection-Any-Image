@@ -15,7 +15,7 @@
 <img src='assets/teaser.png' style="width:100%;"></img>
 </div>
 
-## 📝 TODO List
+## 📝 Todo
 
 - [x] Release inference code
 - [x] Release pretrained model weights
