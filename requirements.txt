@@ -1,6 +1,11 @@
-diffusers==0.32.0
-gradio==4.44.1
+diffusers
+gradio
 gradio_imageslider
 torch
 transformers
+pillow
+numpy
+xformers
+spaces
 accelerate
+imageio

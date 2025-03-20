@@ -30,12 +30,16 @@ import torch as torch
 torch.backends.cuda.matmul.allow_tf32 = True
 from PIL import Image
 from gradio_imageslider import ImageSlider
-from tqdm import tqdm
 
 from pathlib import Path
 import gradio
 from gradio.utils import get_cache_folder
+
 from DAI.pipeline_all import DAIPipeline
+
+from DAI.controlnetvae import ControlNetVAEModel
+
+from DAI.decoder import CustomAutoencoderKL
 
 from diffusers import (
     AutoencoderKL,
@@ -43,10 +47,6 @@ from diffusers import (
 )
 
 from transformers import CLIPTextModel, AutoTokenizer
-
-from DAI.controlnetvae import ControlNetVAEModel
-
-from DAI.decoder import CustomAutoencoderKL
 
 
 class Examples(gradio.helpers.Examples):
@@ -58,44 +58,11 @@ class Examples(gradio.helpers.Examples):
         self.create()
 
 
-default_seed = 2024
-default_batch_size = 1
-
-default_image_processing_resolution = 2048
-default_video_out_max_frames = 60
-
 def process_image_check(path_input):
     if path_input is None:
         raise gr.Error(
             "Missing image in the first pane: upload a file or use one from the gallery below."
         )
-
-def resize_image(input_image, resolution):
-    # Ensure input_image is a PIL Image object
-    if not isinstance(input_image, Image.Image):
-        raise ValueError("input_image should be a PIL Image object")
-
-    # Convert image to numpy array
-    input_image_np = np.asarray(input_image)
-
-    # Get image dimensions
-    H, W, C = input_image_np.shape
-    H = float(H)
-    W = float(W)
-    
-    # Calculate the scaling factor
-    k = float(resolution) / min(H, W)
-    
-    # Determine new dimensions
-    H *= k
-    W *= k
-    H = int(np.round(H / 64.0)) * 64
-    W = int(np.round(W / 64.0)) * 64
-    
-    # Resize the image using PIL's resize method
-    img = input_image.resize((W, H), Image.Resampling.LANCZOS)
-    
-    return img
 
 def process_image(
     pipe,
@@ -108,9 +75,6 @@ def process_image(
     path_output_dir = tempfile.mkdtemp()
     path_out_png = os.path.join(path_output_dir, f"{name_base}_delight.png")
     input_image = Image.open(path_input)
-    # resolution = 0
-    # if max(input_image.size) < 768:
-    #     resolution = None
     resolution = None
 
     pipe_out = pipe(
@@ -126,96 +90,15 @@ def process_image(
     processed_frame.save(path_out_png)
     yield [input_image, path_out_png]
 
-def process_video(
-    pipe,
-    vae_2,
-    path_input,
-    out_max_frames=default_video_out_max_frames,
-    target_fps=10,
-    progress=gr.Progress(),
-):
-    if path_input is None:
-        raise gr.Error(
-            "Missing video in the first pane: upload a file or use one from the gallery below."
-        )
-
-    name_base, name_ext = os.path.splitext(os.path.basename(path_input))
-    print(f"Processing video {name_base}{name_ext}")
-
-    path_output_dir = tempfile.mkdtemp()
-    path_out_vis = os.path.join(path_output_dir, f"{name_base}_delight.mp4")
-
-    init_latents = None
-    reader, writer = None, None
-    try:
-        reader = imageio.get_reader(path_input)
-
-        meta_data = reader.get_meta_data()
-        fps = meta_data["fps"]
-        size = meta_data["size"]
-        duration_sec = meta_data["duration"]
-
-        writer = imageio.get_writer(path_out_vis, fps=target_fps)
-
-        out_frame_id = 0
-        pbar = tqdm(desc="Processing Video", total=duration_sec)
-
-        for frame_id, frame in enumerate(reader):
-            if frame_id % (fps // target_fps) != 0:
-                continue
-            else:
-                out_frame_id += 1
-                pbar.update(1)
-            if out_frame_id > out_max_frames:
-                break
-
-            frame_pil = Image.fromarray(frame)
-
-            resolution = None
-
-            pipe_out = pipe(
-                image=frame_pil,
-                prompt="remove glass reflection",
-                vae_2=vae_2,
-                processing_resolution=resolution,
-            )
-
-            if init_latents is None:
-                init_latents = pipe_out.gaus_noise
-            processed_frame = (pipe_out.prediction.clip(-1, 1) + 1) / 2
-            processed_frame = processed_frame[0]
-            _processed_frame = imageio.core.util.Array(processed_frame)
-            writer.append_data(_processed_frame)
-            
-            yield (
-                [frame_pil, processed_frame],
-                None,
-            )
-    finally:
-
-        if writer is not None:
-            writer.close()
-
-        if reader is not None:
-            reader.close()
-
-    yield (
-        [frame_pil, processed_frame],
-        [path_out_vis,]
-    )
-
 
 def run_demo_server(pipe, vae_2):
     process_pipe_image = spaces.GPU(functools.partial(process_image, pipe, vae_2))
-    process_pipe_video = spaces.GPU(
-        functools.partial(process_video, pipe, vae_2), duration=120
-    )
 
     gradio_theme = gr.themes.Default()
 
     with gr.Blocks(
         theme=gradio_theme,
-        title="Dereflection Any Image",
+        title="DAI",
         css="""
             #download {
                 height: 118px;
@@ -274,7 +157,7 @@ def run_demo_server(pipe, vae_2):
                         )
                         with gr.Row():
                             image_submit_btn = gr.Button(
-                                value="remove reflection", variant="primary"
+                                value="Dereflection", variant="primary"
                             )
                             image_reset_btn = gr.Button(value="Reset")
                     with gr.Column():
@@ -299,7 +182,6 @@ def run_demo_server(pipe, vae_2):
                     cache_examples=False,
                     directory_name="examples_image",
                 )
-
 
         ### Image tab
         image_submit_btn.click(
@@ -331,7 +213,6 @@ def run_demo_server(pipe, vae_2):
             queue=False,
         )
 
-
         ### Server launch
 
         demo.queue(
@@ -348,41 +229,40 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     weight_dtype = torch.float32
-    model_dir = "./weights"
-    pretrained_model_name_or_path = "JichenHu/dereflection-any-image-v0"
+    pretrained_model_name_or_path = "sjtu-deepvision/dereflection-any-image-v0"
     pretrained_model_name_or_path2 = "stabilityai/stable-diffusion-2-1"
     revision = None
     variant = None
+
     # Load the model
     controlnet = ControlNetVAEModel.from_pretrained(pretrained_model_name_or_path, subfolder="controlnet", torch_dtype=weight_dtype).to(device)
     unet = UNet2DConditionModel.from_pretrained(pretrained_model_name_or_path, subfolder="unet", torch_dtype=weight_dtype).to(device)
     vae_2 = CustomAutoencoderKL.from_pretrained(pretrained_model_name_or_path, subfolder="vae_2", torch_dtype=weight_dtype).to(device)
 
-    # Load other components of the pipeline
     vae = AutoencoderKL.from_pretrained(
-            pretrained_model_name_or_path2, subfolder="vae", revision=revision, variant=variant
-        ).to(device)
+        pretrained_model_name_or_path2, subfolder="vae", revision=revision, variant=variant
+    ).to(device)
 
     text_encoder = CLIPTextModel.from_pretrained(
-            pretrained_model_name_or_path2, subfolder="text_encoder", revision=revision, variant=variant
-        ).to(device)
+        pretrained_model_name_or_path2, subfolder="text_encoder", revision=revision, variant=variant
+    ).to(device)
     tokenizer = AutoTokenizer.from_pretrained(
-                pretrained_model_name_or_path2,
-                subfolder="tokenizer",
-                revision=revision,
-                use_fast=False,
-            )
+        pretrained_model_name_or_path2,
+        subfolder="tokenizer",
+        revision=revision,
+        use_fast=False,
+    )
     pipe = DAIPipeline(
-            vae=vae,
-            text_encoder=text_encoder,
-            tokenizer=tokenizer,
-            unet=unet,
-            controlnet=controlnet,
-            safety_checker=None,
-            scheduler=None,
-            feature_extractor=None,
-            t_start=0,
-        ).to(device)
+        vae=vae,
+        text_encoder=text_encoder,
+        tokenizer=tokenizer,
+        unet=unet,
+        controlnet=controlnet,
+        safety_checker=None,
+        scheduler=None,
+        feature_extractor=None,
+        t_start=0,
+    ).to(device)
 
     try:
         import xformers
