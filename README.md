@@ -20,7 +20,7 @@
 - [x] Release inference code
 - [x] Release pretrained model weights
 - [x] Release project page
-- [ ] Release paper
+- [x] Release paper
 - [ ] Release dataset
 - [ ] Release training code
 
