@@ -58,4 +58,12 @@ python demo.py
 If you find Derefelection Any Image useful for your work please cite:
 
 ```text
+@misc{hu2025dereflection,
+    title={Dereflection Any Image with Diffusion Priors and Diversified Data},
+    author={Jichen Hu and Chen Yang and Zanwei Zhou and Jiemin Fang and Xiaokang Yang and Qi Tian and Wei Shen},
+    year={2025},
+    eprint={2503.17347},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV}
+}
 ```
