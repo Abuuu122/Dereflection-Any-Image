@@ -5,7 +5,7 @@
 # Dereflection Any Image with Diffusion Priors and Diversified Data
 ### [Project Page](https://abuuu122.github.io/DAI.github.io/) | [Paper](https://arxiv.org/abs/2503.17347) | [Data (coming soon)]() | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/129uKcCNfoR2sIn5RifqhYGpB0xa2tdsH?usp=sharing) | [![Hugging Face Space](https://img.shields.io/badge/🤗%20Hugging%20Face%20-Space-yellow)](https://huggingface.co/spaces/sjtu-deepvision/Dereflection-Any-Image) | [![Hugging Face Model](https://img.shields.io/badge/🤗%20Hugging%20Face%20-Model-green)](https://huggingface.co/sjtu-deepvision/dereflection-any-image-v0)
 
-📖[Dereflection Any Image with Diffusion Priors and Diversified Data](https://gaussianobject.github.io/)
+📖[Dereflection Any Image with Diffusion Priors and Diversified Data](https://abuuu122.github.io/DAI.github.io/)
 
 [Jichen Hu](https://abuuu122.github.io/DAI.github.io/)<sup>1*</sup>, [Chen Yang](https://scholar.google.com/citations?hl=zh-CN&user=StdXTR8AAAAJ)<sup>1*</sup>, [Zanwei Zhou](https://abuuu122.github.io/DAI.github.io/)<sup>1</sup>, [Jiemin Fang](https://jaminfong.cn/)<sup>2†</sup>, [Xiaokang Yang](https://abuuu122.github.io/DAI.github.io/)<sup>1</sup>, [Qi Tian](https://www.qitian1987.com/)<sup>2</sup>, [Wei Shen](https://shenwei1231.github.io/)<sup>1✉†</sup>,    
 <sup>1</sup>MoE Key Lab of Artificial Intelligence, AI Institute, SJTU &emsp; <sup>2</sup>Huawei Inc. &emsp;   
