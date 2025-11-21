@@ -1,4 +1,6 @@
 export MODEL_DIR="stabilityai/stable-diffusion-2-1"
+# It was removed from huggingface, alternative: 
+# export MODEL_DIR="Manojb/stable-diffusion-2-1-base"
 export OUTPUT_DIR="/data_hdd2/users/yangchen/projects/SIRR/Dereflection-Any-Image/models/model"
 export TORCH_DISTRIBUTED_DEBUG=DETAIL
 

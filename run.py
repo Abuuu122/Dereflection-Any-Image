@@ -39,7 +39,7 @@ model_dir = "./weights"
 pretrained_model_name_or_path = "sjtu-deepvision/dereflection-any-image-v0"
 # pretrained_model_name_or_path2 = "stabilityai/stable-diffusion-2-1"
 revision = None
-variant = "fp16"
+variant = None
 # Load the model
 # normal
 controlnet = ControlNetVAEModel.from_pretrained(pretrained_model_name_or_path, subfolder="controlnet", torch_dtype=weight_dtype).to(device)

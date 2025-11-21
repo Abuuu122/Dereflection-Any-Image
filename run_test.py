@@ -36,7 +36,7 @@ model_dir = "/data_hdd2/users/yangchen/projects/SIRR/StableDelight/models/model_
 vae_2_dir = "/data_hdd2/users/yangchen/projects/SIRR/StableDelight/models/model_decoder_0.2/checkpoint-42000"
 pretrained_model_name_or_path = "sjtu-deepvision/dereflection-any-image-v0"
 revision = None
-variant = "fp16"
+variant = None
 # Load the model
 # normal
 controlnet = ControlNetVAEModel.from_pretrained(model_dir + "/controlnet", torch_dtype=weight_dtype).to(device)
