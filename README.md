@@ -1,14 +1,15 @@
 <div align="center">
 <img src='assets/logo.png' style="height:100px"></img>
+<h1>Dereflection Any Image with Diffusion Priors and Diversified Data</h1>
+<h2 style="border-bottom:none;">AAAI 2026</h2>
 </div>
 
-# Dereflection Any Image with Diffusion Priors and Diversified Data
-### [Project Page](https://abuuu122.github.io/DAI.github.io/) | [Paper](https://arxiv.org/abs/2503.17347) | [Data (coming soon)]() | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/129uKcCNfoR2sIn5RifqhYGpB0xa2tdsH?usp=sharing) | [![Hugging Face Space](https://img.shields.io/badge/🤗%20Hugging%20Face%20-Space-yellow)](https://huggingface.co/spaces/sjtu-deepvision/Dereflection-Any-Image) | [![Hugging Face Model](https://img.shields.io/badge/🤗%20Hugging%20Face%20-Model-green)](https://huggingface.co/sjtu-deepvision/dereflection-any-image-v0)
+### [Project Page](https://abuuu122.github.io/DAI.github.io/) | [Paper](https://arxiv.org/abs/2503.17347) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/129uKcCNfoR2sIn5RifqhYGpB0xa2tdsH?usp=sharing) | [![Hugging Face Space](https://img.shields.io/badge/🤗%20Hugging%20Face%20-Space-yellow)](https://huggingface.co/spaces/sjtu-deepvision/Dereflection-Any-Image) | [![Hugging Face Model](https://img.shields.io/badge/🤗%20Hugging%20Face%20-Model-green)](https://huggingface.co/sjtu-deepvision/dereflection-any-image-v0) | [![Hugging Face Dataset](https://img.shields.io/badge/🤗%20Hugging%20Face%20-Dataset-red)](https://huggingface.co/datasets/sjtu-deepvision/DRR_data)
 
 📖[Dereflection Any Image with Diffusion Priors and Diversified Data](https://abuuu122.github.io/DAI.github.io/)
 
-[Jichen Hu](https://abuuu122.github.io/DAI.github.io/)<sup>1*</sup>, [Chen Yang](https://scholar.google.com/citations?hl=zh-CN&user=StdXTR8AAAAJ)<sup>1*</sup>, [Zanwei Zhou](https://abuuu122.github.io/DAI.github.io/)<sup>1</sup>, [Jiemin Fang](https://jaminfong.cn/)<sup>2†</sup>, [Xiaokang Yang](https://abuuu122.github.io/DAI.github.io/)<sup>1</sup>, [Qi Tian](https://www.qitian1987.com/)<sup>2</sup>, [Wei Shen](https://shenwei1231.github.io/)<sup>1✉†</sup>,    
-<sup>1</sup>MoE Key Lab of Artificial Intelligence, AI Institute, SJTU &emsp; <sup>2</sup>Huawei Inc. &emsp;   
+[Jichen Hu](https://abuuu122.github.io/DAI.github.io/)<sup>1*</sup>, [Chen Yang](https://scholar.google.com/citations?hl=zh-CN&user=StdXTR8AAAAJ)<sup>1*</sup>, [Zanwei Zhou](https://abuuu122.github.io/DAI.github.io/)<sup>1</sup>, [Jiemin Fang](https://jaminfong.cn/)<sup>2†</sup>, [Qi Tian](https://www.qitian1987.com/)<sup>2</sup>, [Wei Shen](https://shenwei1231.github.io/)<sup>1✉†</sup>,    
+<sup>1</sup>MoE Key Lab of Artificial Intelligence, AI Institute, School of Computer Science, Shanghai Jiao Tong University &emsp; <sup>2</sup>Huawei Inc. &emsp;   
 <sup>*</sup>Equal contribution. &emsp; <sup>†</sup>Project lead. &emsp; <sup>✉</sup>Corresponding author.
 
 <div align="center">
@@ -21,8 +22,8 @@
 - [x] Release pretrained model weights
 - [x] Release project page
 - [x] Release paper
-- [ ] Release dataset
-- [ ] Release training code
+- [x] Release dataset
+- [x] Release training code
 
 ## 🚀Setup
 
@@ -52,6 +53,53 @@ or use script run.sh directly.
 ```
 python demo.py
 ```
+
+## 🏋️‍♂️ Training
+
+### Data preparation
+
+You can download the training and test data by [Huggingface](https://huggingface.co/datasets/sjtu-deepvision/DRR_data) or run the download_merge.sh, the dir structure is like:
+
+```
+dataset_root/
+├── train/
+│   ├── nature/
+│   ├── real/
+│   ├── DRR/
+│   ├── Syn/
+│   ├── DRR_dual/
+│   ├── Syn_dual/
+│
+└── test/
+    ├── real20_420/
+    ├── Nature/
+    ├── SIR2/
+    ├── DRR-S/
+    ├── DRR-C/
+```
+
+Run create_jsonl.py to create jsonl files for training.
+
+### Progressive training
+```sh
+# change to your local path before running
+
+# foundamental training
+sh train.sh
+
+# reflection-invariant fine-tuning
+sh train_dual.sh
+
+# train the CLD
+sh train_decoder.sh
+```
+
+### Test
+```sh
+python run_test.py
+python metrics.py -m /path/to/output
+```
+
 
 ## 🌏 Citation
 
