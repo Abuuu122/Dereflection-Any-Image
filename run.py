@@ -36,10 +36,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 weight_dtype = torch.float32
 model_dir = "./weights"
-pretrained_model_name_or_path = "JichenHu/dereflection-any-image-v0"
-pretrained_model_name_or_path2 = "stabilityai/stable-diffusion-2-1"
+pretrained_model_name_or_path = "sjtu-deepvision/dereflection-any-image-v0"
+# pretrained_model_name_or_path2 = "stabilityai/stable-diffusion-2-1"
 revision = None
-variant = None
+variant = "fp16"
 # Load the model
 # normal
 controlnet = ControlNetVAEModel.from_pretrained(pretrained_model_name_or_path, subfolder="controlnet", torch_dtype=weight_dtype).to(device)
@@ -49,15 +49,15 @@ vae_2 = CustomAutoencoderKL.from_pretrained(pretrained_model_name_or_path, subfo
 
 # Load other components of the pipeline
 vae = AutoencoderKL.from_pretrained(
-        pretrained_model_name_or_path2, subfolder="vae", revision=revision, variant=variant
+        pretrained_model_name_or_path, subfolder="vae", revision=revision, variant=variant
     ).to(device)
 
 # import pdb; pdb.set_trace()
 text_encoder = CLIPTextModel.from_pretrained(
-        pretrained_model_name_or_path2, subfolder="text_encoder", revision=revision, variant=variant
+        pretrained_model_name_or_path, subfolder="text_encoder", revision=revision, variant=variant
     ).to(device)
 tokenizer = AutoTokenizer.from_pretrained(
-            pretrained_model_name_or_path2,
+            pretrained_model_name_or_path,
             subfolder="tokenizer",
             revision=revision,
             use_fast=False,

@@ -230,9 +230,9 @@ def main():
 
     weight_dtype = torch.float32
     pretrained_model_name_or_path = "sjtu-deepvision/dereflection-any-image-v0"
-    pretrained_model_name_or_path2 = "stabilityai/stable-diffusion-2-1"
+    # pretrained_model_name_or_path2 = "stabilityai/stable-diffusion-2-1"
     revision = None
-    variant = None
+    variant = "fp16"
 
     # Load the model
     controlnet = ControlNetVAEModel.from_pretrained(pretrained_model_name_or_path, subfolder="controlnet", torch_dtype=weight_dtype).to(device)
@@ -240,14 +240,14 @@ def main():
     vae_2 = CustomAutoencoderKL.from_pretrained(pretrained_model_name_or_path, subfolder="vae_2", torch_dtype=weight_dtype).to(device)
 
     vae = AutoencoderKL.from_pretrained(
-        pretrained_model_name_or_path2, subfolder="vae", revision=revision, variant=variant
+        pretrained_model_name_or_path, subfolder="vae", revision=revision, variant=variant
     ).to(device)
 
     text_encoder = CLIPTextModel.from_pretrained(
-        pretrained_model_name_or_path2, subfolder="text_encoder", revision=revision, variant=variant
+        pretrained_model_name_or_path, subfolder="text_encoder", revision=revision, variant=variant
     ).to(device)
     tokenizer = AutoTokenizer.from_pretrained(
-        pretrained_model_name_or_path2,
+        pretrained_model_name_or_path,
         subfolder="tokenizer",
         revision=revision,
         use_fast=False,

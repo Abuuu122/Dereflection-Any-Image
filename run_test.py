@@ -34,9 +34,9 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 weight_dtype = torch.float32
 model_dir = "/data_hdd2/users/yangchen/projects/SIRR/StableDelight/models/model_dual2/checkpoint-20000"
 vae_2_dir = "/data_hdd2/users/yangchen/projects/SIRR/StableDelight/models/model_decoder_0.2/checkpoint-42000"
-pretrained_model_name_or_path = "stabilityai/stable-diffusion-2-1"
+pretrained_model_name_or_path = "sjtu-deepvision/dereflection-any-image-v0"
 revision = None
-variant = None
+variant = "fp16"
 # Load the model
 # normal
 controlnet = ControlNetVAEModel.from_pretrained(model_dir + "/controlnet", torch_dtype=weight_dtype).to(device)
